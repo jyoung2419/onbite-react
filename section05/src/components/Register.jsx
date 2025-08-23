@@ -7,57 +7,58 @@ import { useState } from "react";
 // 4. 자기소개
 
 const Register = () => {
-  const [name, setName] = useState("이름");
-  const [birth, setBirth] = useState("");
-  const [country, setCountry] = useState("");
-  const [bio, setBio] = useState("");
+  // 객체 형태로 관리하는 방법
+  const [input, setInput] = useState({
+    name: "",
+    birth: "",
+    country: "",
+    bio: ""
+  });
 
-  const onChangeName = (e) => {
-    setName(e.target.value);
-  };
-
-  const onChangeBirth = (e) => {
-    setBirth(e.target.value);
-  }
-
-  const onChangeCountry = (e) => {
-    setCountry(e.target.value);
-  }
-
-  const onChangeBio = (e) => {
-    setBio(e.target.value);
+  // 통합 이벤트 핸들러
+  // 입력 필드(name 속성 기준)의 값을 변경하면 해당 [key]만 업데이트해서 input 상태를 갱신
+  const onChange = (e) =>{
+    console.log(e.target.name, e.target.value)
+    setInput({
+      ...input,
+      [e.target.name]: e.target.value,
+    })
   }
 
   return (
     <div>
       <div>
       <input
-        value={name}
-        onChange={onChangeName}
+        name="name"
+        value={input.name}
+        onChange={onChange}
         placeholder={"이름"}
       />
       </div>
 
       <div>
       <input 
-        value={birth}
-        onChange={onChangeBirth}
+        name="birth"
+        value={input.birth}
+        onChange={onChange}
         type="date" />
       </div>
 
       <div>
-        <select value = {country} onChange={onChangeCountry}>
+        <select 
+          name="country"
+          value = {input.country}
+          onChange={onChange}
+          >
           <option value = ""></option>
           <option value = "kr">한국</option>
           <option value = "us">미국</option>
           <option value = "uk">영국</option>
         </select>
-        {country}
       </div>
 
       <div>
-        <textarea value={bio} onChange={onChangeBio}/>
-        {bio}
+        <textarea name="bio" value={input.bio} onChange={onChange}/>
       </div>
     </div>
   );
