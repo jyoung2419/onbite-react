@@ -1,20 +1,32 @@
 import './App.css'
 import Viewer from './components/Viewer'
 import Controller from './components/Controller';
-import { useState, useEffect } from 'react';
+import Even from './components/Even';
+import { useState, useEffect, useRef } from 'react';
 
 function App() {
   const [count, setCount] = useState(0);
   const [input, setInput] = useState("");
 
-  useEffect(()=>{
-    console.log(`count: ${count} / input: ${input}`)
-  }, [count, input]);
-  // [count]: 의존성 배열
-  // dependency array = deps(뎁스)
+  const isMount = useRef(false);
 
-  // 비동기로 작동되기 때문에 변경된 state를 사용하여
-  // 사이드 이펙트에 해당하는 작업을 하기 위해서는 useEffect를 사용해야 함
+  // 1. 마운트 : 탄생
+  useEffect(() =>{
+    console.log("mount");
+  }, [])  // deps(빈 배열)를 넣으면 처음 마운트될 때 딱 한 번만 실행
+
+  // 2. 업데이트 : 변화, 리렌더링
+  useEffect(()=>{
+    if(!isMount.current){
+      isMount.current = true;
+      return;
+    }
+    console.log("update");
+  })  // deps(빈 배열) 생략
+
+  // 3. 언마운트 : 죽음
+  
+
   const onClickButton = (value) => {
     setCount(count + value);
   };
@@ -29,6 +41,7 @@ function App() {
     </section>
     <section>
       <Viewer count= {count}/>
+      {count % 2 === 0 ? <Even /> : null}
     </section>
     <section>
       <Controller onClickButton={onClickButton}/>
