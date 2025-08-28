@@ -1,5 +1,5 @@
 import './App.css'
-import { useState, useRef, useReducer, useCallback, createContext } from 'react'
+import { useState, useRef, useReducer, useCallback, createContext, useMemo } from 'react'
 import Header from './components/Header'
 import Editor from './components/Editor'
 import List from './components/List'
@@ -44,9 +44,10 @@ function reducer(state, action) {
   }
 }
 
-export const TodoContext = createContext(); 
-// App 컴포넌트가 리렌더링될 때마다 다시 생성될 필요가 없으니
-// 보통 컴포넌트 외부에 선언
+// // App 컴포넌트가 리렌더링될 때마다 다시 생성될 필요가 없으니
+// // 보통 컴포넌트 외부에 선언
+export const TodoStateContext = createContext();
+export const TodoDispatchContext = createContext();
 
 function App() {  
   const [todos, dispatch] = useReducer(reducer, mockData);
@@ -83,20 +84,21 @@ function App() {
     })
   }, [])
 
+  const memoizedDispatch = useMemo(()=>{
+    return { onCreate, onUpdate, onDelete};
+  }, []);
+
   return (
     <div className='App'>
       <Header />
-      <TodoContext.Provider
-        value={{
-          todos,
-          onCreate,
-          onUpdate,
-          onDelete
-        }}
-      >
-      <Editor />
-      <List />
-      </TodoContext.Provider>
+      <TodoStateContext.Provider value={todos}>
+        <TodoDispatchContext.Provider
+          value={memoizedDispatch}
+        >
+        <Editor />
+        <List />
+        </TodoDispatchContext.Provider>
+      </TodoStateContext.Provider>
     </div>
   )
 }
